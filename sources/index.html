@@ -56,10 +56,9 @@
 		function selectBdd() {
 			bdd.execute({
 				sql:'select count(1) as nb_lignes from perf', 
-				callback: function(content) { printResult(content);}
+				onSuccess: printResult
 			});		
 		}
-		
 		function printResult(p_content) {
 			retour = p_content;
 			if (typeof retour!="object")
@@ -72,7 +71,7 @@
 			for (b=0;b<nbInsert;b++) {
 				bdd.execute({
 					sql:'insert into perf (timestamp) values ('+(new Date()).getTime()+')', 
-					callback: function(content) { resultTest(content);}
+					onSuccess: resultTest
 				});
 				//$('#nb_insert').html(compteurInsert+'/'+b);
 			}
@@ -94,19 +93,20 @@
 			$('#retour_ajax_load').html('');
 			bdd.execute({
 				sql:'DELETE from perf', 
-				callback: function(content) { alert('finish');}
+				onSuccess: alert1
 			});
 		}
+		function alert1(content) { alert('finish');
 		
 		function LoadBase() {
 			bdd.execute({
 				sql:'select * from perf', 
-				callback: function(content) { resultLoad(content);}
+				onSuccess: resultLoad
 			});
 		}
 		
 		function resultLoad(p_content) {
-			//alert('retour = '+p_content)
+			alert('retour = '+p_content)
 			var LineLoad='';
 			retour = p_content;
 			if (typeof retour!="object") eval('retour = '+retour);	
@@ -114,7 +114,7 @@
 				LineLoad += '<div '+((c%2) ? 'style="background:#ccc;"' : '')+'><b>'+(c+1)+'</b> / '+retour[c].id+' / '+retour[c].timestamp+'</div>';
 			}
 			$('#retour_ajax_load').html(LineLoad);
-			//alert(retour.length+' Lines');
+			alert(retour.length+' Lines');
 		}
 	</script>
 </body>
