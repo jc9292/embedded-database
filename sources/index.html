@@ -49,11 +49,10 @@
 	<script>
 		var nbInsert=100;
 		var compteurInsert = 0;
-		var bdd = jembe.db.openDatabase({
-			dbName:'bdd_ts'
-		});
+		var bdd = jembe.db.openDatabase({bdd_ts});
 		
 		function selectBdd() {
+			alert('base='+bdd);
 			bdd.execute({
 				sql:'select count(1) as nb_lignes from perf', 
 				onSuccess: printResult
