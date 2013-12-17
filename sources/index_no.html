@@ -26,7 +26,7 @@
 	<div data-role="page" id="page1">
 		<div data-theme="a" data-role="header"><h3>jeMbe bdd 2.0</h3></div>
 		<div data-role="content">
-			
+			<div id=log></div>
 			<table width="100%" cellpadding="2" cellspacing="2" border="0" >
 				<tr>
 					<td><a data-role="button" data-transition="fade" href="javascript:" onclick="selectBdd()">Nb line in base</a><div id="is_ready"></div></td>
@@ -49,63 +49,68 @@
 	<script>
 		var nbInsert=100;
 		var compteurInsert = 0;
-		var bdd = jembe.db.openDatabase({bdd_ts});
+		function onError(e){
+			alert(e.message);
+		}
+		
+		if(window.openDatabase){
+			var db = openDatabase(
+					'mydb', '1.0', 'Test DB', 2 * 1024 * 1024, 
+					function(db){ $('#log').html('Open Bdd ok'); }
+				);
+			db.transaction(function(tx) {
+				tx.executeSql(
+					"CREATE TABLE perf (id REAL UNIQUE, timestamp INT)",
+					[],
+					function(tx){ $('#log').html('creation TABLE ok'); },
+					onError
+				);
+			});
+		}
 		
 		function selectBdd() {
-			alert('base='+bdd);
-			bdd.execute({
-				sql:'select count(1) as nb_lignes from perf', 
-				onSuccess: printResult
+			db.transaction(function(tx) {
+				tx.executeSql(
+					'select count(1) as nb_lignes from perf',
+					[],
+					function(tx){ $('#log').html('nb ligne='); }, 
+					onError
+				);
 			});		
-		}
-		function printResult(p_content) {
-			retour = p_content;
-			if (typeof retour!="object")
-				eval('retour = '+retour);	
-			$('#is_ready').fadeOut().fadeIn().html('<b>'+retour[0].nb_lignes+' Lines</b>');
 		}
 		
 		function insertBdd() {
 			compteurInsert=0;
-			for (b=0;b<nbInsert;b++) {
-				bdd.execute({
-					sql:'insert into perf (timestamp) values ('+(new Date()).getTime()+')', 
-					onSuccess: resultTest
+			for (b=0; b<nbInsert; b++) {
+				db.transaction(function(tx) {
+					tx.executeSql(
+						'insert into perf (timestamp) values ('+(new Date()).getTime()+')', 
+						[],
+						function(tx){ resultTest(tx); }, 
+						onError
+					);
 				});
-				//$('#nb_insert').html(compteurInsert+'/'+b);
 			}
 		}
-		
 		function resultTest(p_content) {
 			compteurInsert++;
 			$('#nb_insert').html(compteurInsert+' / <b>'+nbInsert+' Lines</b>');
-			if (compteurInsert>=nbInsert) {
-				selectBdd();
-				LoadBase();
-			}
 		}
 		
-		function resetAll() {
-			compteurInsert=0;
-			$('#is_ready').html('');
-			$('#nb_insert').html('');
-			$('#retour_ajax_load').html('');
-			bdd.execute({
-				sql:'DELETE from perf', 
-				onSuccess: alert1
-			});
-		}
-		function alert1(content) { alert('finish');
+		function resetAll() { }
 		
 		function LoadBase() {
-			bdd.execute({
-				sql:'select * from perf', 
-				onSuccess: resultLoad
+			db.transaction(function(tx) {
+				tx.executeSql(
+					'select * from perf', 
+					[],
+					function(tx) { resultLoad(tx); },
+					onError
+				);
 			});
 		}
 		
 		function resultLoad(p_content) {
-			alert('retour = '+p_content)
 			var LineLoad='';
 			retour = p_content;
 			if (typeof retour!="object") eval('retour = '+retour);	
