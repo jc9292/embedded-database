@@ -20,7 +20,6 @@
 </style>
 <script src="js/jquery-1.7.1.js"></script>
 <script src="js/jquery.mobile-1.0.1.min.js"></script>
-<script type="text/javascript" src="jembe.js"></script>
 </head>
 <body>
 	<div data-role="page" id="page1">
@@ -29,7 +28,7 @@
 			
 			<table width="100%" cellpadding="2" cellspacing="2" border="0" >
 				<tr>
-					<td><a data-role="button" data-transition="fade" href="javascript:" onclick="selectBdd()">Nb line in base</a><div id="is_ready"></div></td>
+					<td><a data-role="button" data-transition="fade" href="javascript:" onclick="selectBdd()">Nb line in base (selectBdd)</a><div id="is_ready"></div></td>
 				</tr>
 				<tr>
 					<td><a data-role="button" data-transition="fade" href="javascript:" onclick="insertBdd()">Insert in base (x100)</a><div id="nb_insert"></div></td>
@@ -52,11 +51,13 @@
 		var bdd = jembe.db.openDatabase({
 			dbName:'bdd_ts'
 		});
+		alert('base bdd='+bdd);
 		
 		function selectBdd() {
+			alert('selectBdd');
 			bdd.execute({
 				sql:'select count(1) as nb_lignes from perf', 
-				onSuccess: function(content) { printResult(content);}
+				onSuccess: function(content) { alert('ok => printresult'); printResult(content);}
 			});		
 		}
 		
@@ -99,6 +100,7 @@
 		}
 		
 		function LoadBase() {
+			alert('bdd='+bdd);
 			bdd.execute({
 				sql:'select * from perf', 
 				onSuccess: function(content) { resultLoad(content);}
