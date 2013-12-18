@@ -43,7 +43,7 @@
 			</table>
 		</div>
 		<div data-theme="a" data-role="footer">
-			<h3>copyright jeMbe 2013</h3>
+			<h3>copyright jeMbe 2013-3</h3>
 		</div>
 	</div>
 	<script>
@@ -56,6 +56,71 @@
 		alert('base1 bdd='+bdd);
 		
 		
+		function selectBdd() {
+			alert('selectBdd');
+			bdd.execute({
+				sql:'select count(1) as nb_lignes from perf', 
+				onSuccess: function(content) { alert('ok => printresult'); printResult(content);}
+			});		
+		}
+		
+		function printResult(p_content) {
+			retour = p_content;
+			if (typeof retour!="object")
+				eval('retour = '+retour);	
+			$('#is_ready').fadeOut().fadeIn().html('<b>'+retour[0].nb_lignes+' Lines</b>');
+		}
+		
+		function insertBdd() {
+			compteurInsert=0;
+			for (b=0;b<nbInsert;b++) {
+				bdd.execute({
+					sql:'insert into perf (timestamp) values ('+(new Date()).getTime()+')', 
+					onSuccess: function(content) { resultTest(content);}
+				});
+				//$('#nb_insert').html(compteurInsert+'/'+b);
+			}
+		}
+		
+		function resultTest(p_content) {
+			compteurInsert++;
+			$('#nb_insert').html(compteurInsert+' / <b>'+nbInsert+' Lines</b>');
+			if (compteurInsert>=nbInsert) {
+				selectBdd();
+				LoadBase();
+			}
+		}
+		
+		function resetAll() {
+			compteurInsert=0;
+			$('#is_ready').html('');
+			$('#nb_insert').html('');
+			$('#retour_ajax_load').html('');
+			bdd.execute({
+				sql:'DELETE from perf', 
+				onSuccess: function(content) { alert('finish');}
+			});
+		}
+		
+		function LoadBase() {
+			alert('bdd='+bdd);
+			bdd.execute({
+				sql:'select * from perf', 
+				onSuccess: function(content) { resultLoad(content);}
+			});
+		}
+		
+		function resultLoad(p_content) {
+			//alert('retour = '+p_content)
+			var LineLoad='';
+			retour = p_content;
+			if (typeof retour!="object") eval('retour = '+retour);	
+			for(c=0;c<retour.length;c++) {
+				LineLoad += '<div '+((c%2) ? 'style="background:#ccc;"' : '')+'><b>'+(c+1)+'</b> / '+retour[c].id+' / '+retour[c].timestamp+'</div>';
+			}
+			$('#retour_ajax_load').html(LineLoad);
+			//alert(retour.length+' Lines');
+		}
 	</script>
 </body>
 </html>
