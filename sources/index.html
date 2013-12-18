@@ -49,16 +49,13 @@
 		alert('go ok');
 		var nbInsert=100;
 		var compteurInsert = 0;
-		var bdd = jembe.db.openDatabase({
-			dbName:'bdd_ts'
-		});
+		//var bdd = jembe.db.openDatabase({
+		//	dbName:'bdd_ts'
+		//});
 		alert('base1 bdd='+bdd);
 		var db = JembeDb('bdd_ts');
 		alert('base2 bdd='+db);
-		var db = jembe.db.openDatabase({'bdd_ts'});
-		alert('base3 bdd='+db);
-		var db = jembe.db.openDatabase({bdd_ts});
-		alert('base4 bdd='+db);
+		
 		
 		function selectBdd() {
 			alert('selectBdd');
