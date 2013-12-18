@@ -42,16 +42,23 @@
 			</table>
 		</div>
 		<div data-theme="a" data-role="footer">
-			<h3>copyright jeMbe 2012</h3>
+			<h3>copyright jeMbe 2013</h3>
 		</div>
 	</div>
 	<script>
+		alert('go ok');
 		var nbInsert=100;
 		var compteurInsert = 0;
 		var bdd = jembe.db.openDatabase({
 			dbName:'bdd_ts'
 		});
-		alert('base bdd='+bdd);
+		alert('base1 bdd='+bdd);
+		var db = JembeDb('bdd_ts');
+		alert('base2 bdd='+db);
+		var db = jembe.db.openDatabase({'bdd_ts'});
+		alert('base3 bdd='+db);
+		var db = jembe.db.openDatabase({bdd_ts});
+		alert('base4 bdd='+db);
 		
 		function selectBdd() {
 			alert('selectBdd');
